@@ -1,4 +1,4 @@
-# Suggigy
+# Suggestrix 
 This project implements an auto-suggest & auto-complete system using Trie and MySQL.
 
 ## Features
