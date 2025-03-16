@@ -9,7 +9,7 @@ class Tries{
     public:
         Tries();
         void insert(string word);
-        void search(string word);
+        bool search(string word);
         vector < string > getSuggestion(string prefix);
 
     private:

@@ -9,9 +9,9 @@ void Tries::insert(string word) {
     TrieNode* node = root;
     for(char ch : word) {
         if(node->children.count(ch) == 0) {
-            node->children[ch] = new TrieNode();
+            node->children[ch] = *new TrieNode();
         }
-        node = node->children[ch];
+        node = &node->children[ch];
     }
     node->isEnd = true;
     node->frequency++;
@@ -23,19 +23,19 @@ bool Tries::search(string word) {
         if(node->children.count(ch) == 0) {
             return false;
         }
-        node = node->children[ch];
+        node = &node->children[ch];
     }
     return node->isEnd;
 }
 
-vector<string> Tries::getSuggestions(string prefix) {
+vector<string> Tries::getSuggestion(string prefix) {
     TrieNode* node = root;
     priority_queue<pair<int, string>> suggestions;
     for(char ch : prefix) {
         if(node->children.count(ch) == 0) {
             return {}; 
         }
-        node = node->children[ch];
+        node = &node->children[ch];
     }
 
     dfs(node, prefix, suggestions);
@@ -56,6 +56,6 @@ void Tries::dfs(TrieNode* node, string word, priority_queue<pair<int, string>>& 
     }
 
     for(auto& child : node->children) {
-        dfs(child.second, word + child.first, suggestions);
+        dfs(&child.second, word + child.first, suggestions);
     }
 }
