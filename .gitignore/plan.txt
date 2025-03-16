@@ -1,0 +1,12 @@
+A scalable, real-time auto-suggestion and auto-correction system that:
+
+Fetches words from Wikipedia API dynamically
+Stores words in MySQL along with their frequency
+Uses Tries for fast lookups & MySQL for ranking
+Updates frequency dynamically each time a user selects a word
+Ensures high availability with multiple data copies (fail-safe mechanism)
+Deploys with a simple, clean website interface
+
+
+
+Since we have plan of inserting 2-4M of data we thought of creating 26 Tries with a Zookeeper

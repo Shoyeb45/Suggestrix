@@ -1,21 +1,20 @@
 #ifndef TRIE_H
 #define TRIE_H
 
-#include <iostream>
 #include <vector>
-using namespace std;
+#include <string>
+#include <queue>
+#include "TriesNode.h" 
 
-struct TrieNode {
-    TrieNode *children[26];
-    int frequency;
-    bool isEnd;
+class Tries{
+    public:
+        Tries();
+        void insert(string word);
+        void search(string word);
+        vector < string > getSuggestion(string prefix);
 
-    TrieNode() {
-        isEnd = false;
-        frequency = 0;
-        for (int i = 0; i < 26; i++)
-            children[i] = nullptr;
-    }
+    private:
+        TrieNode* root;
+        void dfs(TrieNode* node, string word, vector < pair < int, string > > &suggestion);
 };
-
 #endif
