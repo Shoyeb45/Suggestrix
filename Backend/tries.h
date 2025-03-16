@@ -1,5 +1,4 @@
-#ifndef TRIE_H
-#define TRIE_H
+
 
 #include <vector>
 #include <string>
@@ -15,6 +14,6 @@ class Tries{
 
     private:
         TrieNode* root;
-        void dfs(TrieNode* node, string word, vector < pair < int, string > > &suggestion);
+        void dfs(TrieNode* node, string word, priority_queue < pair < int, string > > &suggestion);
 };
-#endif
+
