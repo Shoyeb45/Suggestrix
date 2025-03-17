@@ -2,7 +2,13 @@
 #include <unordered_map>
 #include <set>
 #include <vector>
-
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
+#include <algorithm>
+#include <utility>
+#include <cctype>
 using namespace std;
 
 // Custom comparator for ordering words based on searchFreq, then freq, then lexicographically
@@ -137,23 +143,59 @@ public:
     }
 };
 
+// Function to trim whitespace and quotes from a string
+std::string trim(const std::string &str) {
+    size_t first = str.find_first_not_of(" \"");
+    if (first == std::string::npos) return "";
+    size_t last = str.find_last_not_of(" \"");
+    return str.substr(first, last - first + 1);
+}
+
+// Function to parse JSON-like key-value pairs from a file into a vector
+std::vector<std::pair<std::string, int>> parseJsonToVector(const std::string &filename) {
+    std::ifstream file(filename);
+    if (!file) {
+        std::cerr << "Error opening file: " << filename << std::endl;
+        return {};
+    }
+
+    std::string jsonStr, line;
+    while (std::getline(file, line)) {
+        jsonStr += line; // Read entire file into a string
+    }
+
+    // Remove `{` and `}`
+    jsonStr.erase(std::remove(jsonStr.begin(), jsonStr.end(), '{'), jsonStr.end());
+    jsonStr.erase(std::remove(jsonStr.begin(), jsonStr.end(), '}'), jsonStr.end());
+
+    std::vector<std::pair<std::string, int>> dataVector;
+    std::stringstream ss(jsonStr);
+    std::string pairStr;
+
+    // Parse key-value pairs
+    while (std::getline(ss, pairStr, ',')) {
+        size_t colonPos = pairStr.find(':');
+        if (colonPos == std::string::npos) continue;
+
+        std::string key = trim(pairStr.substr(0, colonPos));
+        int value = std::stoi(trim(pairStr.substr(colonPos + 1)));
+
+        dataVector.emplace_back(key, value);
+    }
+
+    return dataVector;
+}
+
+
 // Driver function to test the Trie
 int main() {
     Trie trie;
 
-    // Insert words from corpus (word, frequency)
-    trie.insert("apple", 10);
-    trie.insert("application", 15);
-    trie.insert("app", 20);
-    trie.insert("apricot", 5);
-    trie.insert("ape", 8);
-    trie.insert("apex", 12);
-    trie.insert("banana", 7);
-    trie.insert("band", 9);
-    trie.insert("bandana", 6);
-    trie.insert("bandwidth", 4);
-    trie.insert("bat", 11);
-    trie.insert("batch", 3);
+    vector<pair<string, int>> corpus = parseJsonToVector("./../Databse/wikipedia_word_freq.json");
+
+    for (auto x: corpus) {
+        trie.insert(x.first, x.second);
+    }
 
     cout << "Initial suggestions for 'a':\n";
     vector<tuple<string, int, int>> suggestions = trie.getTopSuggestions("a");
@@ -185,7 +227,7 @@ int main() {
             cout << "No suggestions found.\n";
         } else {
             for (const auto& suggestion : suggestions) {
-                cout << get<0>(suggestion) << " (SearchFreq: " << get<1>(suggestion) << ", Freq: " << get<2>(suggestion) << ") ";
+                cout << get<0>(suggestion) << " (SearchFreq: " << get<1>(suggestion) << ", Freq: " << get<2>(suggestion) << ")\n";
             }
             cout << "\n";
         }
