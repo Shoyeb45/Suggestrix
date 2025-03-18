@@ -2,7 +2,7 @@
 #include <unordered_map>
 #include <set>
 #include <vector>
-#include <iostream>
+#include <stack>
 #include <fstream>
 #include <string>
 #include <sstream>
@@ -64,22 +64,24 @@ public:
     // Insert a word into Trie
     void insert(const string& word, int frequency) {
         TrieNode* node = root;
-        vector<TrieNode*> path; // Store path to update parents
-        path.push_back(root);  // Include root in the path
+        stack<TrieNode*> path; // Store path to update parents
+        path.push(root);  // Include root in the path
 
         for (char ch : word) {
             if (!node->children[ch]) {
                 node->children[ch] = new TrieNode();
             }
             node = node->children[ch];
-            path.push_back(node);
+            path.push(node);
         }
 
         node->wordEnd = true;
         node->freq += frequency;
 
         // Update topWords for the entire path
-        for (auto pathNode : path) {
+        while (!path.empty()) {
+            TrieNode* pathNode = path.top();
+            path.pop();
             updateTopWords(pathNode, word, node->searchFreq, node->freq);
         }
     }
@@ -104,13 +106,13 @@ public:
     // Update search frequency when a user selects a suggestion
     void searchUpdate(const string& word) {
         TrieNode* node = root;
-        vector<TrieNode*> path; // Track visited nodes
-        path.push_back(root);  // Include root in the path
+        stack<TrieNode*> path; // Track visited nodes
+        path.push(root);  // Include root in the path
 
         for (char ch : word) {
             if (!node->children[ch]) return; // Word not found
             node = node->children[ch];
-            path.push_back(node);
+            path.push(node);
         }
 
         if (node->wordEnd) {
@@ -121,7 +123,10 @@ public:
             wordNode->searchFreq++;
             
             // Update each node in the path
-            for (auto pathNode : path) {
+            while (!path.empty()) {
+                TrieNode* pathNode = path.top();
+                path.pop();
+                
                 // Remove old entry if it exists
                 for (auto it = pathNode->topWords.begin(); it != pathNode->topWords.end(); ) {
                     if (it->second == word) {
