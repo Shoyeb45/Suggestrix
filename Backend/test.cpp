@@ -86,6 +86,26 @@ public:
         }
     }
 
+    // Check if a prefix exists in the trie
+    bool isValidPrefix(const string &prefix) {
+        TrieNode *node = root;
+        for (char ch : prefix) {
+            if (!node->children.count(ch)) return false;
+            node = node->children[ch];
+        }
+        return true;
+    }
+
+    // Check if a word is a complete word in the trie
+    bool isEndWord(const string &word) {
+        TrieNode *node = root;
+        for (char ch : word) {
+            if (!node->children.count(ch)) return false;
+            node = node->children[ch];
+        }
+        return node->wordEnd;
+    }
+
     // Search for top suggestions for a given prefix
     vector<tuple<string, int, int>> getTopSuggestions(const string& prefix) {
         TrieNode* node = root;
@@ -173,60 +193,48 @@ std::vector<std::pair<std::string, int>> parseJsonToVector(const std::string &fi
     return dataVector;
 }
 
-
 // Driver function to test the Trie
 int main() {
     Trie trie;
-
     vector<pair<string, int>> corpus = parseJsonToVector("./../Databse/wikipedia_word_freq.json");
 
-    for (auto x: corpus) {
-        trie.insert(x.first, x.second);
-    }
+    for (auto x: corpus) trie.insert(x.first, x.second);
 
     cout << "Initial suggestions for 'a':\n";
     vector<tuple<string, int, int>> suggestions = trie.getTopSuggestions("a");
-    for (const auto& suggestion : suggestions) {
-        cout << get<0>(suggestion) << " (SearchFreq: " << get<1>(suggestion) << ", Freq: " << get<2>(suggestion) << ") ";
-    }
-    cout << "\n\n";
-
-    // Simulate a user selecting "app" multiple times
-    trie.searchUpdate("app");
-    trie.searchUpdate("app");
     
-    cout << "After searching for 'app' twice:\n";
-    suggestions = trie.getTopSuggestions("a");
-    for (const auto& suggestion : suggestions) {
-        cout << get<0>(suggestion) << " (SearchFreq: " << get<1>(suggestion) << ", Freq: " << get<2>(suggestion) << ") ";
-    }
+    for (auto &s : suggestions) 
+        cout << get<0>(s) << " (SearchFreq: " << get<1>(s) << ", Freq: " << get<2>(s) << ") ";
+    
     cout << "\n\n";
 
-    string prefix;
-    while (true) {
-        cout << "Enter a prefix to get top suggestions (or type 'exit' to quit): ";
+    string prefix, word;
+    
+    while (1) {
+        cout << "Enter a prefix (or 'exit' to quit): ";
         cin >> prefix;
+        
         if (prefix == "exit") break;
+
+        if (!trie.isValidPrefix(prefix)) {
+            cout << "Invalid prefix\n";
+            continue;
+        }
 
         suggestions = trie.getTopSuggestions(prefix);
         cout << "Top suggestions for '" << prefix << "':\n";
-        if (suggestions.empty()) {
-            cout << "No suggestions found.\n";
-        } else {
-            for (const auto& suggestion : suggestions) {
-                cout << get<0>(suggestion) << " (SearchFreq: " << get<1>(suggestion) << ", Freq: " << get<2>(suggestion) << ")\n";
-            }
+        
+        if (suggestions.empty()) cout << "No suggestions found.\n";
+        else {
+            for (auto &s : suggestions) 
+                cout << get<0>(s) << " (SearchFreq: " << get<1>(s) << ", Freq: " << get<2>(s) << ")\n";
             cout << "\n";
         }
-        
-        cout << "Enter a word to search (or type 'skip' to continue): ";
-        string word;
-        cin >> word;
-        if (word != "skip") {
-            trie.searchUpdate(word);
-            cout << "Search frequency updated for '" << word << "'\n";
+
+        if (trie.isEndWord(prefix)) {
+            trie.searchUpdate(prefix);
+            cout << "Search frequency updated for '" << prefix << "'\n";
         }
     }
-
     return 0;
 }
