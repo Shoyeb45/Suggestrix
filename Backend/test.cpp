@@ -108,44 +108,26 @@ public:
         TrieNode* node = root;
         stack<TrieNode*> path; // Track visited nodes
         path.push(root);  // Include root in the path
-
+    
         for (char ch : word) {
             if (!node->children[ch]) return; // Word not found
             node = node->children[ch];
             path.push(node);
         }
-
+    
         if (node->wordEnd) {
-            // Find the node at the end of the word
             TrieNode* wordNode = node;
-            
-            // Increase search frequency
-            wordNode->searchFreq++;
-            
-            // Update each node in the path
+            wordNode->searchFreq++; // Increase search frequency
+    
+            // Update topWords in all ancestor nodes using updateTopWords
             while (!path.empty()) {
                 TrieNode* pathNode = path.top();
                 path.pop();
-                
-                // Remove old entry if it exists
-                for (auto it = pathNode->topWords.begin(); it != pathNode->topWords.end(); ) {
-                    if (it->second == word) {
-                        it = pathNode->topWords.erase(it);
-                    } else {
-                        ++it;
-                    }
-                }
-                
-                // Add the new entry with updated search frequency
-                pathNode->topWords.insert({{wordNode->searchFreq, wordNode->freq}, word});
-                
-                // Maintain only top 5 elements
-                if (pathNode->topWords.size() > 5) {
-                    pathNode->topWords.erase(prev(pathNode->topWords.end()));
-                }
+                updateTopWords(pathNode, word, wordNode->searchFreq, wordNode->freq);
             }
         }
-    }
+    }    
+    
 };
 
 // Function to trim whitespace and quotes from a string
