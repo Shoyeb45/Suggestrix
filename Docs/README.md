@@ -5,6 +5,19 @@ This project is an **efficient autocomplete search engine** using **Trie data st
 
 ---
 
+## Note
+For now, I am writing code in `test.cpp`. Once I am a little satisfied with the implementation, I will create separate header files (`.h`) and C++ files (`.cpp`).
+
+### How to Compile and Run:
+Use the following command to compile and execute the code:
+
+```sh
+g++ -std=c++11 -o test test.cpp && ./test
+
+g++ -std=c++17 -o test test.cpp && ./test
+
+```
+---
 ## **Features**
 - **Fast Autocomplete Suggestions**: Provides top word suggestions in real-time.
 - **Search Ranking**: Prioritizes words based on search frequency.
