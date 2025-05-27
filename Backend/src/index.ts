@@ -1,13 +1,17 @@
 import express, { RequestHandler } from 'express';
 import fs from 'fs';
 import csv from 'csv-parser';
+import cors from 'cors';
 import { Trie } from "../dist/tries/Tries";
 import config from '../config';
 
 const app = express();
 const trie = new Trie();
+app.use(cors({
+  origin: 'http://localhost:5173'
+}))
 
-fs.createReadStream('./src/db/ngram_freq_dict.csv')
+fs.createReadStream('./src/db/ngram_freq_dict_top_80.csv')
   .pipe(csv())
   .on('data', (row: { word: string; count: string }) => {
     trie.insert(row.word, parseInt(row.count, 10));
@@ -32,12 +36,15 @@ const suggestionHandler: RequestHandler = (req, res) => {
     return;
   }
 
-  if (trie.isvalid(word)) {
-    const suggestions = trie.getSuggestion(word);
+  if (trie.isValidPrefix(word)) {
+    if (trie.isEndWord(word)) {
+      trie.searchUpdate(word); 
+    }
+    const suggestions = trie.getTopSuggestions(word);
     res.json({ type: 'autocomplete', suggestions });
     return;
   } else {
-    const corrections = trie.getCorrections(word, maxDistance);
+    const corrections = trie.getCorrect(word, maxDistance);
     res.json({ type: 'autocorrect', suggestions: corrections });
     return;
   }

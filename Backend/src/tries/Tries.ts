@@ -73,7 +73,7 @@ class Trie {
     let node = this.root;
     const path: TrieNode[] = [node];
     for (const ch of word) {
-      if (!node.children.has(ch)) return; // word not found
+      if (!node.children.has(ch)) return; 
       node = node.children.get(ch)!;
       path.push(node);
     }
@@ -88,24 +88,29 @@ class Trie {
   private levenshteinDistance(s: string, t: string): number {
     const m = s.length;
     const n = t.length;
-    const dp: number[][] = Array(m + 1)
-      .fill(null)
-      .map(() => Array(n + 1).fill(0));
-
-    for (let i = 0; i <= m; i++) dp[i][0] = i;
-    for (let j = 0; j <= n; j++) dp[0][j] = j;
-
+  
+    if (m < n) return this.levenshteinDistance(t, s);
+  
+    let prev = Array(n + 1).fill(0);
+    let curr = Array(n + 1).fill(0);
+  
+    for (let j = 0; j <= n; j++) prev[j] = j;
+  
     for (let i = 1; i <= m; i++) {
+      curr[0] = i;
       for (let j = 1; j <= n; j++) {
-        if (s[i - 1] === t[j - 1]) dp[i][j] = dp[i - 1][j - 1];
-        else
-          dp[i][j] =
-            1 +
-            Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
+        if (s[i - 1] === t[j - 1]) {
+          curr[j] = prev[j - 1];
+        } else {
+          curr[j] = 1 + Math.min(prev[j], curr[j - 1], prev[j - 1]);
+        }
       }
+      [prev, curr] = [curr, prev];
     }
-    return dp[m][n];
+  
+    return prev[n];
   }
+
 
   getCorrect(word: string, maxDist = 2): SuggestionEntry[] {
     const results: SuggestionEntry[] = [];
