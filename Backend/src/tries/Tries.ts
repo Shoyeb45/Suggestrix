@@ -85,55 +85,43 @@ class Trie {
     }
   }
 
-  private levenshteinDistance(s: string, t: string): number {
-    const m = s.length;
-    const n = t.length;
-  
-    if (m < n) return this.levenshteinDistance(t, s);
-  
-    let prev = Array(n + 1).fill(0);
-    let curr = Array(n + 1).fill(0);
-  
-    for (let j = 0; j <= n; j++) prev[j] = j;
-  
-    for (let i = 1; i <= m; i++) {
-      curr[0] = i;
-      for (let j = 1; j <= n; j++) {
-        if (s[i - 1] === t[j - 1]) {
-          curr[j] = prev[j - 1];
-        } else {
-          curr[j] = 1 + Math.min(prev[j], curr[j - 1], prev[j - 1]);
-        }
-      }
-      [prev, curr] = [curr, prev];
-    }
-  
-    return prev[n];
-  }
-
-
-  getCorrect(word: string, maxDist = 2): SuggestionEntry[] {
+  getCorrect(word: string, maxDist: number): SuggestionEntry[] {
     const results: SuggestionEntry[] = [];
-
-    const dfs = (node: TrieNode, currentWord: string) => {
-      if (node.wordEnd) {
-        const dist = this.levenshteinDistance(word, currentWord);
-        if (dist <= maxDist) {
-          results.push({
-            word: currentWord,
-            freq: node.freq,
-            searchFreq: node.searchFreq,
-          });
-        }
+  
+    const dfs = (node: TrieNode, char: string, prevRow: number[], wordSoFar: string) => {
+      const columns = word.length + 1;
+      const currentRow = [prevRow[0] + 1];
+  
+      for (let i = 1; i < columns; i++) {
+        const insertCost = currentRow[i - 1] + 1;
+        const deleteCost = prevRow[i] + 1;
+        const replaceCost = word[i - 1] === char ? prevRow[i - 1] : prevRow[i - 1] + 1;
+        currentRow.push(Math.min(insertCost, deleteCost, replaceCost));
       }
-      for (const [ch, child] of node.children) {
-        dfs(child, currentWord + ch);
+  
+      if (node.wordEnd && currentRow[word.length] <= maxDist) {
+        results.push({
+          word: wordSoFar,
+          freq: node.freq,
+          searchFreq: node.searchFreq
+        });
+      }
+  
+      if (Math.min(...currentRow) <= maxDist) {
+        for (const [nextChar, child] of node.children) {
+          dfs(child, nextChar, currentRow, wordSoFar + nextChar);
+        }
       }
     };
-
-    dfs(this.root, "");
-    results.sort(compareEntries);
-    return results.slice(0, 5);
+  
+    const rootRow = Array(word.length + 1).fill(0).map((_, i) => i);
+  
+    for (const [char, child] of this.root.children) {
+      dfs(child, char, rootRow, char);
+    }
+  
+    results.sort(compareEntries); 
+    return results.slice(0, 5); 
   }
 }
 export { Trie };
