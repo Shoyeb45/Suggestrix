@@ -1,0 +1,1 @@
+{"root":["./src/index.ts","./src/type/suggestionentry.ts","./src/tries/tries.ts","./src/types/config.d.ts","./src/types/csv-parser.d.ts","./src/types/tries.d.ts"],"version":"5.8.3"}
