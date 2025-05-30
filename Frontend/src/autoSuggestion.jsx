@@ -20,7 +20,7 @@ export default function Autocomplete() {
 
       try {
         setIsLoading(true);
-        const res = await fetch(`http://localhost:3000/suggestion?word=${searchQuery}`);
+        const res = await fetch(`https://suggestrix-backend.up.railway.app/suggestion?word=${searchQuery}`);
         const data = await res.json();
         setType(data.type);
         setSuggestions(data.suggestions);
@@ -31,7 +31,6 @@ export default function Autocomplete() {
         setIsLoading(false);
       }
     };
-
     const timeoutId = setTimeout(fetchSuggestions, 300);
     return () => clearTimeout(timeoutId);
   }, [query]);
