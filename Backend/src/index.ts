@@ -8,7 +8,7 @@ import config from '../config.js';
 const app = express();
 const trie = new Trie();
 app.use(cors({
-  origin: 'http://localhost:5173'
+  origin: 'https://suggestrix.vercel.app'
 }))
 
 fs.createReadStream('./src/db/ngram_freq_dict_top_80.csv')
