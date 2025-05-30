@@ -115,7 +115,6 @@ class Trie {
     };
   
     const rootRow = Array(word.length + 1).fill(0).map((_, i) => i);
-  
     for (const [char, child] of this.root.children) {
       dfs(child, char, rootRow, char);
     }
