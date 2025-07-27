@@ -29,24 +29,25 @@ Suggestrix is an intelligent autocomplete and autosuggestion web app built using
 1. **Clone the repository:**
 
    ```bash
-      git clone https://github.com/Najma099/Suggestrix.git
-      cd Suggestrix
+         git clone https://github.com/Najma099/Suggestrix.git
+         cd Suggestrix
    ```
-Install dependencies:
+2.Install dependencies in each sub-folder(Frontend & Backend):
 
-    ```bash
+   ```bash
       npm install
-    ```
-Start the development server:
+   ```
+3.Start the development server:
 
-    ```bash
-        npm start
-    ```
-### Open http://localhost:3000 in your browser to view the app.
+   ```bash
+      npm start
+   ```
+---
+#### Open http://localhost:3000 in your browser to view the app.
 
 
 ## Live Demo
-Live Demo Link — 
+Live Demo Link — https://suggestrix.vercel.app/
 
 
 ## Note from the Author
