@@ -29,8 +29,8 @@ Suggestrix is an intelligent autocomplete and autosuggestion web app built using
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/Najma099/Suggestrix.git
-   cd Suggestrix
+      git clone https://github.com/Najma099/Suggestrix.git
+      cd Suggestrix
    ```
 Install dependencies:
 
@@ -42,14 +42,14 @@ Start the development server:
     ```bash
         npm start
     ```
-Open http://localhost:3000 in your browser to view the app.
+### Open http://localhost:3000 in your browser to view the app.
 
 
-##Live Demo
+## Live Demo
 Live Demo Link — 
 
 
-About the Author
+## Note from the Author
 This project is very close to my heart. I enjoyed building Suggestrix from scratch, especially implementing the trie algorithm myself. It challenged me to deeply understand both React and fundamental data structures, and I’m proud of the result.
 — Najma Khatun
 
