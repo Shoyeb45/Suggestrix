@@ -73,7 +73,7 @@ When a user clicks or types a word, this function:
 
 This makes the system **learn user behavior** over time.
 
---
+---
 
 ### 🔹 `getCorrect(word, maxDist)`
 
