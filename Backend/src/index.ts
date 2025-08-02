@@ -18,8 +18,8 @@ fs.createReadStream('./src/db/ngram_freq_dict_top_80.csv')
   })
   .on('end', () => {
     console.log('CSV file processed and Trie built');
-    app.listen(config.port, () => {
-      console.log(`Server running on port ${config.port}`);
+    app.listen(config.port ?? 5000, () => {
+      console.log(`Server running on port ${config.port ?? 5000}`);
     });
   });
 
@@ -30,11 +30,11 @@ const suggestionHandler: RequestHandler = (req, res) => {
   const word = typeof wordParam === 'string' ? wordParam : '';
   const maxDistance = typeof maxDistanceParam === 'string' ? parseInt(maxDistanceParam, 10) : 2;
 
-  if (word.trim() === '') {
-    const top = trie.getTopWords();
-    res.json({ type: 'top', suggestions: top });
-    return;
-  }
+  // if (word.trim() === '') {
+  //   const top = trie.getTopWords();
+  //   res.json({ type: 'top', suggestions: top });
+  //   return;
+  // }
 
   if (trie.isValidPrefix(word)) {
     if (trie.isEndWord(word)) {
