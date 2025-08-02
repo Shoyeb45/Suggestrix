@@ -2,7 +2,7 @@ import express, { RequestHandler } from 'express';
 import fs from 'fs';
 import csv from 'csv-parser';
 import cors from 'cors';
-import { Trie } from "../dist/tries/Tries.js";
+import { Trie } from "./tries/Tries.js";
 import config from '../config.js';
 
 const app = express();
